@@ -164,14 +164,16 @@ def util_draw_bird_eye_view(seg_map, hoizon_points=ORIGINAL_HORIZON_POINTS):
 										[offset, 0], [bird_eye_view_w - offset, 0]])
 
 	image_points = np.vstack((np.float32([[0, img_h], [img_w, img_h]]), hoizon_points))
+	print("image_points",image_points)
 	M = cv2.getPerspectiveTransform(image_points, bird_eye_view_points)
 	bird_eye_seg_map = cv2.warpPerspective(seg_map, M, (bird_eye_view_w, bird_eye_view_h))
 	return bird_eye_seg_map
 
 
 def perspective_transform(seg_map):
-	img_size = (seg_map.shape[1], seg_map.shape[0])
-	src = np.float32(
+	img_h, img_w = seg_map.shape[:2]
+	bird_eye_view_w, bird_eye_view_h = (img_w, img_h)
+	src = np.float32(   # adjust the points depending on the camera
 		[[200, 720],
 		[1100, 720],
 		[595, 450],
@@ -184,7 +186,7 @@ def perspective_transform(seg_map):
 	m = cv2.getPerspectiveTransform(src, dst)
 	m_inv = cv2.getPerspectiveTransform(dst, src)
 
-	warped = cv2.warpPerspective(seg_map, m, img_size, flags=cv2.INTER_LINEAR)
+	warped = cv2.warpPerspective(seg_map, m, (bird_eye_view_w, bird_eye_view_h), flags=cv2.INTER_LINEAR)
 	unwarped = cv2.warpPerspective(warped, m_inv, (warped.shape[1], warped.shape[0]), flags=cv2.INTER_LINEAR)  # DEBUG
 
 	return warped

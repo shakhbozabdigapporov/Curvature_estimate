@@ -63,7 +63,7 @@ class HybridNets():
 		start = time.time()
 		outputs = self.session.run(self.output_names, {self.input_names[0]: input_tensor})
 		
-		print("fps: ",time.time() - start)
+		# print("fps: ",time.time() - start)
 		return outputs
 
 	def process_output(self, outputs): 
@@ -92,9 +92,6 @@ class HybridNets():
 		filtered_boxes[:,[0,2]] *= self.img_width/self.input_width
 		filtered_boxes[:,[1,3]] *= self.img_height/self.input_height
 
-
-		# print("Filtered boxes: ", filtered_boxes.shape)
-		# print("Filtered scores: ", filtered_scores.shape)
 
 		# Perform nms filtering
 		filtered_boxes, filtered_scores = nms_fast(filtered_boxes, filtered_scores, self.iou_thres)
@@ -127,8 +124,8 @@ class HybridNets():
 		return util_draw_bird_eye_view(seg_map, horizon_points)
 	
 	def draw_perspect(self, image):
-		# blank_image = np.zeros((image.shape[1], image.shape[0], 3), np.uint8)
-		seg_map = self.draw_2D(image, 0.00001, text=False)
+		blank_image = np.zeros((image.shape[1], image.shape[0], 3), np.uint8)
+		seg_map = self.draw_2D(blank_image, 0.00001, text=False)
 		return perspective_transform(seg_map)
 
 	
@@ -145,15 +142,7 @@ class HybridNets():
 
 		combined_img = np.hstack((seg_view, bird_eye_view))
 
-		return bird_eye_view
-	# def warper(img, src, dst):
-
-	# 	# Compute and apply perpective transform
-	# 	img_size = (img.shape[1], img.shape[0])
-	# 	M = cv2.getPerspectiveTransform(src, dst)
-	# 	warped = cv2.warpPerspective(img, M, img_size, flags=cv2.INTER_NEAREST)  # keep same size as input image
-
-	# 	return warped
+		return combined_img
 
 	def get_input_details(self):
 
