@@ -159,12 +159,10 @@ def util_draw_bird_eye_view(seg_map, hoizon_points=ORIGINAL_HORIZON_POINTS):
 	img_h, img_w = seg_map.shape[:2]
 	bird_eye_view_w, bird_eye_view_h = (img_w, img_h)
 	offset = bird_eye_view_w/2.5
-	# offset = bird_eye_view_w/1.3
 	bird_eye_view_points = np.float32([[offset, bird_eye_view_h], [bird_eye_view_w - offset, bird_eye_view_h], 
 										[offset, 0], [bird_eye_view_w - offset, 0]])
 
 	image_points = np.vstack((np.float32([[0, img_h], [img_w, img_h]]), hoizon_points))
-	print("image_points",image_points)
 	M = cv2.getPerspectiveTransform(image_points, bird_eye_view_points)
 	bird_eye_seg_map = cv2.warpPerspective(seg_map, M, (bird_eye_view_w, bird_eye_view_h))
 	return bird_eye_seg_map
@@ -173,71 +171,28 @@ def util_draw_bird_eye_view(seg_map, hoizon_points=ORIGINAL_HORIZON_POINTS):
 def perspective_transform(seg_map):
 	img_h, img_w = seg_map.shape[:2]
 	bird_eye_view_w, bird_eye_view_h = (img_w, img_h)
-	src = np.float32(   # adjust the points depending on the camera
-		[[200, 720],
-		[1100, 720],
-		[595, 450],
-		[685, 450]])
+	src = np.float32(
+		[[230, 1080],
+		[1600, 1080],
+		[900, 240],
+		[1100, 240]])
 	dst = np.float32(
-		[[300, 720],
-		[980, 720],
-		[300, 0],
-		[980, 0]])
+		[[500, 1080],
+		[1420, 1080],
+		[500, 0],
+		[1420, 0]])
+
+
+
 	m = cv2.getPerspectiveTransform(src, dst)
 	m_inv = cv2.getPerspectiveTransform(dst, src)
 
-	warped = cv2.warpPerspective(seg_map, m, (bird_eye_view_w, bird_eye_view_h), flags=cv2.INTER_LINEAR)
-	unwarped = cv2.warpPerspective(warped, m_inv, (warped.shape[1], warped.shape[0]), flags=cv2.INTER_LINEAR)  # DEBUG
+	warped = cv2.warpPerspective(seg_map, m, (bird_eye_view_w, bird_eye_view_h))
+	unwarped = cv2.warpPerspective(warped, m_inv, (warped.shape[1], warped.shape[0]))  # DEBUG
 
-	return warped
-
-
+	return warped, unwarped
 
 
-
-# def calculate_lane_curvature(bird_eye_seg_map, ploty):
-#     # Identify lane pixels
-#     nonzero = bird_eye_seg_map.nonzero()
-#     nonzeroy = np.array(nonzero[0])
-#     nonzerox = np.array(nonzero[1])
-#     lane_inds = ((nonzerox > 0) & (nonzerox < bird_eye_seg_map.shape[1])).nonzero()[0]
-
-#     # Fit a polynomial to the lane pixels
-#     leftx = nonzerox[lane_inds]
-#     lefty = nonzeroy[lane_inds]
-#     left_fit = np.polyfit(lefty, leftx, 2)
-
-#     # Calculate curvature
-#     y_eval = np.max(ploty)
-#     left_curvature = ((1 + (2 * left_fit[0] * y_eval + left_fit[1]) ** 2) ** 1.5) / np.absolute(2 * left_fit[0])
-
-#     return left_curvature
-
-
-
-
-
-def util_draw_aerial_view(seg_map, hoizon_points=ORIGINAL_HORIZON_POINTS):
-    img_h, img_w = seg_map.shape[:2]
-    aerial_view_w, aerial_view_h = (img_w, img_h)
-    offset = aerial_view_w / 2.5  # Adjust the offset as needed
-
-    # Define the points for the aerial view (looking directly down onto the scene)
-    aerial_view_points = np.float32([[0, aerial_view_h], 
-                                     [aerial_view_w, aerial_view_h], 
-                                     [0, 0], 
-                                     [aerial_view_w, 0]])
-
-    # Define the image points (including the horizon)
-    image_points = np.vstack((np.float32([[0, img_h], [img_w, img_h]]), hoizon_points))
-
-    # Calculate the perspective transformation matrix
-    M = cv2.getPerspectiveTransform(image_points, aerial_view_points)
-
-    # Apply the perspective transformation to the segmentation map
-    aerial_seg_map = cv2.warpPerspective(seg_map, M, (aerial_view_w, aerial_view_h))
-
-    return aerial_seg_map
 
 
 
