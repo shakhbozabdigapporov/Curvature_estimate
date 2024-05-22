@@ -17,7 +17,7 @@ from hybridnets.utils import get_horizon_points
 horizon_points = None
 
 # Initialize video
-cap = cv2.VideoCapture("challenge_video.mp4")
+cap = cv2.VideoCapture("output3.mp4")
 
 # videoUrl = 'https://youtu.be/jvRDlJvG8E8'
 # videoPafy = pafy.new(videoUrl)
@@ -58,7 +58,7 @@ while cap.isOpened():
 	blank_image = np.zeros((new_frame.shape[1], new_frame.shape[0], 3), np.uint8)
 
 
-	combined_img = roadEstimator.draw_perspect(blank_image)
+	combined_img = roadEstimator.draw_segmentation(new_frame)
 
 	# combined_img = roadEstimator.draw_perspect(blank_image)
  

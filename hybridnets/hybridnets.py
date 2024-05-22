@@ -129,9 +129,6 @@ class HybridNets():
 		return perspective_transform(seg_map)
 
 	
-	def draw_arial_eye(self, image, horizon_points):
-		seg_map = self.draw_2D(image, 0.00001, text=False)
-		return util_draw_aerial_view(seg_map, horizon_points)
 
 	def draw_all(self, image, horizon_points, alpha = 0.5):
 
