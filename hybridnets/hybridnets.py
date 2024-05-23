@@ -125,6 +125,7 @@ class HybridNets():
 	
 	def draw_perspect(self, image):
 		blank_image = np.zeros((image.shape[1], image.shape[0], 3), np.uint8)
+		# seg_map = self.draw_2D(image, 0.00001, text=False)
 		seg_map = self.draw_2D(blank_image, 0.00001, text=False)
 		return perspective_transform(seg_map)
 

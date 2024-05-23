@@ -25,6 +25,7 @@ seg_map, filtered_boxes, filtered_scores = roadEstimator(img)
 
 blank_image = np.zeros((img.shape[1], img.shape[0],3), np.uint8)
 combined_img = roadEstimator.draw_segmentation(img)
+# binary_warped, unwarped, m, m_inv = roadEstimator.draw_perspect(img)
 binary_warped, unwarped, m, m_inv = roadEstimator.draw_perspect(blank_image)
 
 # binary_warped = cv2.cvtColor(binary_warped, cv2.COLOR_BGR2GRAY)
@@ -45,7 +46,7 @@ def find_lane_lines(binary_warped):
     midpoint = int(histogram.shape[0] / 2)
     leftx_base = np.argmax(histogram[100:midpoint])+100
     rightx_base = np.argmax(histogram[midpoint:-100]) + midpoint
-    	# Plot the histogram
+    	## Plot the histogram
     # plt.plot(histogram)
     # plt.title('Histogram of Lane Line Pixels')
     # plt.xlabel('Pixel Position')
@@ -215,11 +216,10 @@ print(f"Left curvature: {left_curverad} m")
 print(f"Right curvature: {right_curverad} m")
 
 cv2.namedWindow("Road Detections", cv2.WINDOW_NORMAL)
-cv2.imshow("Road Detections", combined_img)
-# cv2.imshow("Road Detections", binary_warped)
-
+# cv2.imshow("Road Detections", combined_img)
+cv2.imshow("Road Detections", result)
 # cv2.imwrite("output.jpg", combined_img)
-# cv2.waitKey(0)
+cv2.waitKey(0)
 
 
 
@@ -235,7 +235,7 @@ cv2.imshow("Road Detections", combined_img)
 # left_fit, right_fit, left_lane_inds, right_lane_inds, out_img = find_lane_lines(binary_warped)
 
 # # # Plot the result
-plt.imshow(out_img)
+# plt.imshow(out_img)
 
 # # if left_fit is not None:
 # #     plt.plot(left_fit[0] * np.linspace(0, binary_warped.shape[0] - 1, binary_warped.shape[0]) ** 2 + 
@@ -249,7 +249,7 @@ plt.imshow(out_img)
 # #              right_fit[2], 
 # #              np.linspace(0, binary_warped.shape[0] - 1, binary_warped.shape[0]), color='yellow')
 
-plt.show()
+# plt.show()
 
 
 
